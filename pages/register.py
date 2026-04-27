@@ -42,9 +42,6 @@ def show():
             if success:
                 st.success("✅ Usuario registrado exitosamente")
                 st.info("Ahora puedes iniciar sesión")
-                if st.button("Ir al login"):
-                    st.session_state.page = "login"
-                    st.rerun()
             else:
                 st.error(f"❌ {message}")
 

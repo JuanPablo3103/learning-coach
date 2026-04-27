@@ -68,9 +68,6 @@ def show():
                 st.success("✅ Contraseña actualizada exitosamente")
                 st.session_state.recover_step = 1
                 st.session_state.recover_username = ""
-                if st.button("Ir al login"):
-                    st.session_state.page = "login"
-                    st.rerun()
 
     st.markdown("---")
     if st.button("⬅️ Volver al login"):
