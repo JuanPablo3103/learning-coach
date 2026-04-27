@@ -1,5 +1,5 @@
 import streamlit as st
-from pages import login, register, dashboard, recover, profile
+from pages import login, register, dashboard, recover, profile, plan
 
 st.set_page_config(
     page_title="Personal Learning Coach",
@@ -32,7 +32,7 @@ if "name" not in st.session_state:
 
 # Navegación entre páginas
 if st.session_state.logged_in:
-    if st.session_state.page not in ["dashboard", "profile"]:
+    if st.session_state.page not in ["dashboard", "profile", "plan"]:
         st.session_state.page = "dashboard"
 
 if st.session_state.page == "login":
@@ -45,3 +45,5 @@ elif st.session_state.page == "dashboard":
     dashboard.show()
 elif st.session_state.page == "profile":
     profile.show()
+elif st.session_state.page == "plan":
+    plan.show()

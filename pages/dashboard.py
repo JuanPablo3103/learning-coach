@@ -1,5 +1,6 @@
 import streamlit as st
 from utils.profile import get_profile, profile_exists
+from utils.agent import load_learning_plan
 
 def show():
     if not st.session_state.get("logged_in"):
@@ -22,15 +23,24 @@ def show():
             st.rerun()
     else:
         profile = get_profile(username)
-        st.success(f"📚 Tema actual: **{profile['topic']}**")
-        st.subheader("¿Qué quieres hacer hoy?")
+        plan = load_learning_plan(username)
 
+        st.success(f"📚 Tema actual: **{profile['topic']}**")
+
+        if plan:
+            st.info(f"📅 Tienes un plan de **{plan['duration_weeks']} semanas** activo")
+        else:
+            st.warning("⚠️ Aún no tienes un plan de aprendizaje generado")
+
+        st.subheader("¿Qué quieres hacer hoy?")
         st.markdown("---")
 
         col1, col2 = st.columns(2)
         with col1:
             st.info("📅 Mi Plan de Aprendizaje")
-            st.button("Ver mi plan", key="plan")
+            if st.button("Ver mi plan", key="plan"):
+                st.session_state.page = "plan"
+                st.rerun()
         with col2:
             st.info("📊 Mi Progreso")
             st.button("Ver progreso", key="progress")

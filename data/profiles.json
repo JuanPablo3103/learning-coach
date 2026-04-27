@@ -4,5 +4,17 @@
         "available_hours": 2,
         "prior_knowledge": "B\u00e1sico \u2014 Conozco algunos conceptos",
         "goals": "nose"
+    },
+    "Jpablo": {
+        "topic": "DevOps",
+        "available_hours": 2,
+        "prior_knowledge": "Principiante \u2014 No s\u00e9 nada del tema",
+        "goals": "Me gustaria conseguir empleo"
+    },
+    "Juanp": {
+        "topic": "Data Science",
+        "available_hours": 2,
+        "prior_knowledge": "Principiante \u2014 No s\u00e9 nada del tema",
+        "goals": "Quiero conseguir empleo"
     }
 }

@@ -12,5 +12,12 @@
         "email": "gfdfg@gmail.com",
         "security_question": "\u00bfEn qu\u00e9 ciudad naciste?",
         "security_answer": "94cecbc31fabe841c641e997e454c7b2e32dd2efe033a3f103f022656f570d9a"
+    },
+    "Juanp": {
+        "name": "Juan Pablo",
+        "password": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+        "email": "juan@gmail.com",
+        "security_question": "\u00bfEn qu\u00e9 ciudad naciste?",
+        "security_answer": "38660e6bd1635f0015ec4956a94ba207dc6562667b2289f4e49aa874cb1675df"
     }
 }
