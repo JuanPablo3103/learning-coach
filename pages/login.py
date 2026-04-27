@@ -25,6 +25,12 @@ def show():
                 st.error(f"❌ {result}")
 
     st.markdown("---")
-    if st.button("¿No tienes cuenta? Regístrate"):
-        st.session_state.page = "register"
-        st.rerun()
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("¿No tienes cuenta? Regístrate"):
+            st.session_state.page = "register"
+            st.rerun()
+    with col2:
+        if st.button("¿Olvidaste tu contraseña?"):
+            st.session_state.page = "recover"
+            st.rerun()

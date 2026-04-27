@@ -1,5 +1,5 @@
 import streamlit as st
-from pages import login, register, dashboard
+from pages import login, register, dashboard, recover
 
 st.set_page_config(
     page_title="Personal Learning Coach",
@@ -38,5 +38,7 @@ if st.session_state.page == "login":
     login.show()
 elif st.session_state.page == "register":
     register.show()
+elif st.session_state.page == "recover":
+    recover.show()
 elif st.session_state.page == "dashboard":
     dashboard.show()
