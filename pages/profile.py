@@ -39,7 +39,7 @@ def show():
 
     # Valores por defecto si ya tiene perfil
     default_topic = existing_profile.get("topic", TOPICS[0]) if existing_profile else TOPICS[0]
-    default_hours = existing_profile.get("available_hours", 1) if existing_profile else 1
+    default_hours = int(existing_profile.get("available_hours", 1)) if existing_profile else 1
     default_knowledge = existing_profile.get("prior_knowledge", KNOWLEDGE_LEVELS[0]) if existing_profile else KNOWLEDGE_LEVELS[0]
     default_goals = existing_profile.get("goals", "") if existing_profile else ""
 
@@ -54,7 +54,9 @@ def show():
             "⏰ ¿Cuántas horas por día puedes estudiar?",
             min_value=1,
             max_value=8,
-            value=default_hours
+            value=int(default_hours),
+            step=1
+
         )
 
         prior_knowledge = st.selectbox(

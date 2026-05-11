@@ -1,8 +1,10 @@
 import os
 import json
 import anthropic
+import json
 from dotenv import load_dotenv
 from utils.profile import get_profile
+from utils.database import get_connection
 
 load_dotenv()
 
@@ -86,27 +88,40 @@ def generate_learning_plan(username):
     except Exception as e:
         return None, f"Error al generar el plan: {str(e)}"
 
+
 def save_learning_plan(username, plan):
-    """Guarda el plan de aprendizaje"""
-    os.makedirs("data", exist_ok=True)
-    plans_file = "data/plans.json"
-    
-    if os.path.exists(plans_file):
-        with open(plans_file, "r") as f:
-            plans = json.load(f)
-    else:
-        plans = {}
-    
-    plans[username] = plan
-    
-    with open(plans_file, "w") as f:
-        json.dump(plans, f, indent=4, ensure_ascii=False)
+    """Guarda el plan de aprendizaje en PostgreSQL"""
+    try:
+        conn = get_connection()
+        cur = conn.cursor()
+        cur.execute("""
+            INSERT INTO plans (username, plan_json)
+            VALUES (%s, %s)
+            ON CONFLICT (username) DO UPDATE SET
+                plan_json = EXCLUDED.plan_json,
+                created_at = CURRENT_TIMESTAMP
+        """, (username, json.dumps(plan, ensure_ascii=False)))
+        conn.commit()
+        return True
+    except Exception as e:
+        print(f"Error al guardar plan: {str(e)}")
+        return False
+    finally:
+        cur.close()
+        conn.close()
 
 def load_learning_plan(username):
-    """Carga el plan de aprendizaje del usuario"""
-    plans_file = "data/plans.json"
-    if not os.path.exists(plans_file):
+    """Carga el plan de aprendizaje desde PostgreSQL"""
+    try:
+        conn = get_connection()
+        cur = conn.cursor()
+        cur.execute("SELECT plan_json FROM plans WHERE username = %s", (username,))
+        row = cur.fetchone()
+        if not row:
+            return None
+        return json.loads(row[0])
+    except Exception:
         return None
-    with open(plans_file, "r") as f:
-        plans = json.load(f)
-    return plans.get(username, None)
+    finally:
+        cur.close()
+        conn.close()

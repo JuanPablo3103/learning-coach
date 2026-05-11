@@ -1,5 +1,7 @@
 import streamlit as st
 from pages import login, register, dashboard, recover, profile, plan
+from utils.database import init_db
+init_db()
 
 st.set_page_config(
     page_title="Personal Learning Coach",
