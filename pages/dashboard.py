@@ -14,7 +14,6 @@ def show():
     <style>
         .block-container { max-width: 720px !important; padding-top: 0.5rem !important; }
         .stApp { background: #0F0E1A !important; }
-
         .topbar {
             display: flex;
             justify-content: space-between;
@@ -200,17 +199,17 @@ def show():
 
         <div class="nav-grid">
             <div class="nav-card">
-                <div class="nav-icon-purple">🗺️</div>
+                <div class="nav-icon-purple">📅</div>
                 <div>
                     <div class="nav-card-title">Mi plan de aprendizaje</div>
-                    <div class="nav-card-sub">Ver tu hoja de ruta semanal</div>
+                    <div class="nav-card-sub">Ver tu plan día a día con recursos</div>
                 </div>
             </div>
             <div class="nav-card">
-                <div class="nav-icon-teal">📊</div>
+                <div class="nav-icon-teal">🗺️</div>
                 <div>
-                    <div class="nav-card-title">Mi progreso</div>
-                    <div class="nav-card-sub">Estadísticas y avance</div>
+                    <div class="nav-card-title">Mi hoja de ruta</div>
+                    <div class="nav-card-sub">Vista general de tu camino</div>
                 </div>
             </div>
             <div class="nav-card">
@@ -232,12 +231,13 @@ def show():
 
         col1, col2 = st.columns(2)
         with col1:
-            if st.button("🗺️ Ver mi plan", use_container_width=True):
+            if st.button("📅 Ver mi plan", use_container_width=True):
                 st.session_state.page = "plan"
                 st.rerun()
         with col2:
-            if st.button("📊 Ver progreso", use_container_width=True):
-                pass
+            if st.button("🗺️ Ver hoja de ruta", use_container_width=True):
+                st.session_state.page = "roadmap"
+                st.rerun()
 
         col3, col4 = st.columns(2)
         with col3:
@@ -248,7 +248,7 @@ def show():
                 pass
 
         st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("✏️ Editar mi perfil", use_container_width=False):
+        if st.button("✏️ Editar mi perfil"):
             st.session_state.page = "profile"
             st.rerun()
 
