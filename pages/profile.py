@@ -54,12 +54,12 @@ def show():
             margin-bottom: 0.5rem; margin-top: 1.25rem;
         }
         /* Radio como tarjetas */
-        div[data-testid="stRadio"] > div {
+        .block-container div[data-testid="stRadio"] > div {
             display: grid !important;
             grid-template-columns: repeat(3, 1fr) !important;
             gap: 8px !important;
         }
-        div[data-testid="stRadio"] > div > label {
+        .block-container div[data-testid="stRadio"] > div > label {
             background: rgba(255,255,255,0.03) !important;
             border: 0.5px solid rgba(255,255,255,0.08) !important;
             border-radius: 8px !important;
@@ -72,16 +72,16 @@ def show():
             align-items: center !important;
             justify-content: center !important;
         }
-        div[data-testid="stRadio"] > div > label:has(input:checked) {
+        .block-container div[data-testid="stRadio"] > div > label:has(input:checked) {
             background: rgba(83,74,183,0.25) !important;
             border: 1.5px solid #534AB7 !important;
             color: #EEEDFE !important;
             font-weight: 600 !important;
         }
-        div[data-testid="stRadio"] > div > label > div:first-child {
+        .block-container div[data-testid="stRadio"] > div > label > div:first-child {
             display: none !important;
         }
-        div[data-testid="stRadio"] > label {
+        .block-container div[data-testid="stRadio"] > label {
             display: none !important;
         }
         /* Niveles en 2 columnas */
@@ -146,12 +146,12 @@ def show():
 
     with st.form("profile_form"):
         st.markdown('<div class="pro-section-title">¿Cuántas horas por día puedes estudiar?</div>', unsafe_allow_html=True)
-        available_hours = st.slider("", min_value=1, max_value=8, value=default_hours, step=1)
+        available_hours = st.slider("Horas por día", min_value=1, max_value=8, value=default_hours, step=1, label_visibility="collapsed")
 
         st.markdown('<div class="pro-section-title">¿Cuál es tu objetivo principal?</div>', unsafe_allow_html=True)
-        goals = st.text_area("", value=default_goals,
+        goals = st.text_area("Objetivo principal", value=default_goals,
             placeholder="Ej: Quiero conseguir trabajo como desarrollador web en 3 meses",
-            height=100)
+            height=100, label_visibility="collapsed")
 
         submit = st.form_submit_button("💾 Guardar perfil")
 

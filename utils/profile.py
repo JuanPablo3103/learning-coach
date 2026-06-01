@@ -1,11 +1,12 @@
-from utils.database import get_connection
+from utils.database import get_connection, ph, is_sqlite
 
 def get_profile(username):
     """Obtiene el perfil de un usuario"""
     try:
         conn = get_connection()
         cur = conn.cursor()
-        cur.execute("SELECT topic, available_hours, prior_knowledge, goals FROM profiles WHERE username = %s", (username,))
+        p = ph()
+        cur.execute(f"SELECT topic, available_hours, prior_knowledge, goals FROM profiles WHERE username = {p}", (username,))
         row = cur.fetchone()
         if not row:
             return None
@@ -22,19 +23,31 @@ def get_profile(username):
         conn.close()
 
 def save_profile(username, topic, available_hours, prior_knowledge, goals):
-    """Guarda o actualiza el perfil del estudiante"""
+    """Guarda o actualiza el perfil del estudiante (compatible con SQLite y PostgreSQL)"""
     try:
         conn = get_connection()
         cur = conn.cursor()
-        cur.execute("""
-            INSERT INTO profiles (username, topic, available_hours, prior_knowledge, goals)
-            VALUES (%s, %s, %s, %s, %s)
-            ON CONFLICT (username) DO UPDATE SET
-                topic = EXCLUDED.topic,
-                available_hours = EXCLUDED.available_hours,
-                prior_knowledge = EXCLUDED.prior_knowledge,
-                goals = EXCLUDED.goals
-        """, (username, topic, available_hours, prior_knowledge, goals))
+        p = ph()
+        if is_sqlite():
+            cur.execute(f"""
+                INSERT INTO profiles (username, topic, available_hours, prior_knowledge, goals)
+                VALUES ({p}, {p}, {p}, {p}, {p})
+                ON CONFLICT(username) DO UPDATE SET
+                    topic = excluded.topic,
+                    available_hours = excluded.available_hours,
+                    prior_knowledge = excluded.prior_knowledge,
+                    goals = excluded.goals
+            """, (username, topic, available_hours, prior_knowledge, goals))
+        else:
+            cur.execute(f"""
+                INSERT INTO profiles (username, topic, available_hours, prior_knowledge, goals)
+                VALUES ({p}, {p}, {p}, {p}, {p})
+                ON CONFLICT (username) DO UPDATE SET
+                    topic = EXCLUDED.topic,
+                    available_hours = EXCLUDED.available_hours,
+                    prior_knowledge = EXCLUDED.prior_knowledge,
+                    goals = EXCLUDED.goals
+            """, (username, topic, available_hours, prior_knowledge, goals))
         conn.commit()
         return True, "Perfil guardado exitosamente"
     except Exception as e:
@@ -48,7 +61,8 @@ def profile_exists(username):
     try:
         conn = get_connection()
         cur = conn.cursor()
-        cur.execute("SELECT 1 FROM profiles WHERE username = %s", (username,))
+        p = ph()
+        cur.execute(f"SELECT 1 FROM profiles WHERE username = {p}", (username,))
         return cur.fetchone() is not None
     except Exception:
         return False

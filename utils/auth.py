@@ -1,5 +1,5 @@
 import hashlib
-from utils.database import get_connection
+from utils.database import get_connection, ph, is_sqlite
 
 def hash_password(password):
     """Convierte la contraseña en un hash seguro"""
@@ -10,12 +10,13 @@ def register_user_with_security(username, name, password, email, security_questi
     try:
         conn = get_connection()
         cur = conn.cursor()
-        cur.execute("SELECT username FROM users WHERE username = %s", (username,))
+        p = ph()
+        cur.execute(f"SELECT username FROM users WHERE username = {p}", (username,))
         if cur.fetchone():
             return False, "El usuario ya existe"
-        cur.execute("""
+        cur.execute(f"""
             INSERT INTO users (username, name, password, email, security_question, security_answer)
-            VALUES (%s, %s, %s, %s, %s, %s)
+            VALUES ({p}, {p}, {p}, {p}, {p}, {p})
         """, (username, name, hash_password(password), email, security_question, hash_password(security_answer.lower())))
         conn.commit()
         return True, "Usuario registrado exitosamente"
@@ -30,7 +31,8 @@ def login_user(username, password):
     try:
         conn = get_connection()
         cur = conn.cursor()
-        cur.execute("SELECT name, password FROM users WHERE username = %s", (username,))
+        p = ph()
+        cur.execute(f"SELECT name, password FROM users WHERE username = {p}", (username,))
         row = cur.fetchone()
         if not row:
             return False, "Usuario no encontrado"
@@ -48,7 +50,8 @@ def get_user(username):
     try:
         conn = get_connection()
         cur = conn.cursor()
-        cur.execute("SELECT username, name, email, security_question FROM users WHERE username = %s", (username,))
+        p = ph()
+        cur.execute(f"SELECT username, name, email, security_question FROM users WHERE username = {p}", (username,))
         row = cur.fetchone()
         if not row:
             return None
@@ -64,7 +67,8 @@ def get_security_question(username):
     try:
         conn = get_connection()
         cur = conn.cursor()
-        cur.execute("SELECT security_question FROM users WHERE username = %s", (username,))
+        p = ph()
+        cur.execute(f"SELECT security_question FROM users WHERE username = {p}", (username,))
         row = cur.fetchone()
         return row[0] if row else None
     except Exception:
@@ -78,7 +82,8 @@ def verify_security_answer(username, answer):
     try:
         conn = get_connection()
         cur = conn.cursor()
-        cur.execute("SELECT security_answer FROM users WHERE username = %s", (username,))
+        p = ph()
+        cur.execute(f"SELECT security_answer FROM users WHERE username = {p}", (username,))
         row = cur.fetchone()
         if not row:
             return False
@@ -94,7 +99,8 @@ def update_password(username, new_password):
     try:
         conn = get_connection()
         cur = conn.cursor()
-        cur.execute("UPDATE users SET password = %s WHERE username = %s", (hash_password(new_password), username))
+        p = ph()
+        cur.execute(f"UPDATE users SET password = {p} WHERE username = {p}", (hash_password(new_password), username))
         conn.commit()
         return True
     except Exception:
