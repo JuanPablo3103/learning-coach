@@ -134,7 +134,8 @@ def show():
                 st.rerun()
         with col6:
             if st.button("🔍 Ver recursos", use_container_width=True):
-                st.toast("🚧 Disponible próximamente (Sprint 4)")
+                st.session_state.page = "resources"
+                st.rerun()
 
         # ─── Acciones secundarias ───
         st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
