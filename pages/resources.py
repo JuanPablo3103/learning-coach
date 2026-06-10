@@ -1,6 +1,6 @@
 import streamlit as st
 from utils.profile import get_profile, profile_exists
-from utils.resources import search_resources, index_topic_resources
+from utils.resources import search_resources, index_topic_resources, get_topic_resources
 
 
 def show():
@@ -69,6 +69,10 @@ def show():
             count = index_topic_resources(username, topic)
         if count:
             st.success(f"✅ Catálogo actualizado: {count} recursos indexados.")
+            # Refrescar el catálogo mostrado y limpiar búsqueda previa
+            st.session_state.rs_mode = "catalog"
+            st.session_state.rs_results = get_topic_resources(username, topic, auto_index=False)
+            st.session_state.rs_last_query = ""
         else:
             st.error("No se pudieron generar recursos. Intenta de nuevo.")
 
@@ -76,18 +80,32 @@ def show():
         search_query = query.strip() or topic
         with st.spinner("Buscando los recursos más relevantes..."):
             results = search_resources(username, search_query, topic=topic)
+        st.session_state.rs_mode = "search"
         st.session_state.rs_results = results
+        st.session_state.rs_last_query = search_query
+
+    # Si es la primera vez en la sesión (o no hay nada cargado), mostrar el catálogo completo
+    if "rs_results" not in st.session_state:
+        with st.spinner("Cargando tus recursos..."):
+            st.session_state.rs_results = get_topic_resources(username, topic)
+        st.session_state.rs_mode = "catalog"
+        st.session_state.rs_last_query = ""
 
     results = st.session_state.get("rs_results")
-    if results is not None:
-        if results:
-            st.markdown('<div class="rs-section">Resultados</div>', unsafe_allow_html=True)
-            st.markdown(_render_results(results), unsafe_allow_html=True)
+    mode = st.session_state.get("rs_mode", "catalog")
+    last_query = st.session_state.get("rs_last_query", "")
+
+    if results:
+        if mode == "search":
+            st.markdown(f'<div class="rs-section">Resultados para: "{last_query}"</div>', unsafe_allow_html=True)
         else:
-            st.info("No se encontraron recursos. Prueba con otra consulta o actualiza el catálogo.")
+            st.markdown('<div class="rs-section">Todos tus recursos</div>', unsafe_allow_html=True)
+        st.markdown(_render_results(results), unsafe_allow_html=True)
+    else:
+        st.info("Aún no hay recursos. Usa «Actualizar catálogo» para generarlos.")
 
     if st.button("⬅️ Volver al dashboard"):
-        st.session_state.pop("rs_results", None)
+        # NO borramos rs_results: así al volver a entrar se recuerdan
         st.session_state.page = "dashboard"
         st.rerun()
 
@@ -111,8 +129,11 @@ def _render_results(results):
         url = r.get("url", "#")
         rtype = r.get("type", "article")
         level = r.get("level", "intermedio")
-        relevance = r.get("relevance", 0)
+        relevance = r.get("relevance", None)
 
-        html += f"""<div class="rs-card"><div class="rs-head"><span class="rs-icon">{icon}</span><span class="rs-rtitle">{title}</span><span class="rs-relevance">{relevance}% relevante</span></div><div class="rs-desc">{desc}</div><div class="rs-meta"><span class="rs-tag">{rtype}</span><span class="rs-tag">{level}</span></div><a class="rs-link" href="{url}" target="_blank">🔗 Abrir recurso</a></div>"""
+        # El badge de % solo aparece en resultados de búsqueda
+        badge = f'<span class="rs-relevance">{relevance}% relevante</span>' if relevance is not None else ""
+
+        html += f"""<div class="rs-card"><div class="rs-head"><span class="rs-icon">{icon}</span><span class="rs-rtitle">{title}</span>{badge}</div><div class="rs-desc">{desc}</div><div class="rs-meta"><span class="rs-tag">{rtype}</span><span class="rs-tag">{level}</span></div><a class="rs-link" href="{url}" target="_blank">🔗 Abrir recurso</a></div>"""
 
     return html

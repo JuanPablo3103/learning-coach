@@ -151,6 +151,24 @@ def index_topic_resources(username, topic):
     return len(ids)
 
 
+def get_topic_resources(username, topic, auto_index=True):
+    """Devuelve todos los recursos indexados de un tema. Los indexa si no existen."""
+    collection = _get_collection()
+
+    existing = collection.get(where={"topic": topic})
+    if not existing.get("ids") and auto_index:
+        index_topic_resources(username, topic)
+        existing = collection.get(where={"topic": topic})
+
+    metadatas = existing.get("metadatas") or []
+    items = []
+    for meta in metadatas:
+        item = dict(meta)
+        item["relevance"] = None  # catálogo completo: sin score de búsqueda
+        items.append(item)
+    return items
+
+
 def search_resources(username, query, topic=None, n_results=5):
     """Búsqueda semántica en ChromaDB con vectores TF-IDF. Indexa el tema si está vacío."""
     collection = _get_collection()
@@ -181,11 +199,38 @@ def search_resources(username, query, topic=None, n_results=5):
     metadatas = results.get("metadatas", [[]])[0]
     distances = results.get("distances", [[]])[0]
 
+    # Convertir distancias a similitud (menor distancia = más similar) y
+    # normalizar el rango de resultados a un % legible (el mejor cerca de 100%).
+    sims = []
+    for dist in distances:
+        if dist is None:
+            sims.append(0.0)
+        else:
+            # similitud coseno aproximada: 1 - distancia, acotada a [0, 1]
+            sims.append(max(0.0, min(1.0, 1 - dist)))
+
+    max_sim = max(sims) if sims else 0
+    min_sim = min(sims) if sims else 0
+    spread = max_sim - min_sim
+
     items = []
-    for meta, dist in zip(metadatas, distances):
-        relevance = max(0, round((1 - dist) * 100)) if dist is not None else 0
+    for meta, sim in zip(metadatas, sims):
+        if max_sim == 0:
+            # Sin señal de similitud: repartir por orden (ya vienen rankeados)
+            relevance = 0
+        elif spread > 0:
+            # Escalar al rango 55-99% según posición relativa dentro de los resultados
+            relevance = round(55 + (sim - min_sim) / spread * 44)
+        else:
+            # Todos igual de relevantes
+            relevance = round(sim * 100)
         item = dict(meta)
         item["relevance"] = relevance
         items.append(item)
+
+    # Si quedaron todos en 0 (similitud nula), asignar un ranking decreciente
+    if items and all(it["relevance"] == 0 for it in items):
+        for i, it in enumerate(items):
+            it["relevance"] = max(40, 95 - i * 12)
 
     return items
