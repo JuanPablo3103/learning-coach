@@ -1,6 +1,7 @@
 import streamlit as st
-from pages import login, register, dashboard, recover, profile, plan, roadmap
+from pages import login, register, dashboard, recover, profile, plan, roadmap, stats
 from utils.database import init_db
+
 init_db()
 
 st.set_page_config(
@@ -22,19 +23,16 @@ st.markdown("""
 # Inicializar session state
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
-
 if "page" not in st.session_state:
     st.session_state.page = "login"
-
 if "username" not in st.session_state:
     st.session_state.username = ""
-
 if "name" not in st.session_state:
     st.session_state.name = ""
 
 # Navegación entre páginas
 if st.session_state.logged_in:
-    if st.session_state.page not in ["dashboard", "profile", "plan", "roadmap"]:
+    if st.session_state.page not in ["dashboard", "profile", "plan", "roadmap", "stats"]:
         st.session_state.page = "dashboard"
 
 if st.session_state.page == "login":
@@ -51,3 +49,5 @@ elif st.session_state.page == "plan":
     plan.show()
 elif st.session_state.page == "roadmap":
     roadmap.show()
+elif st.session_state.page == "stats":
+    stats.show()

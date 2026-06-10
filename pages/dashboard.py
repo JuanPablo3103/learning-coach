@@ -1,6 +1,6 @@
 import streamlit as st
 from utils.profile import get_profile, profile_exists
-from utils.agent import load_learning_plan
+from utils.agent import load_learning_plan, get_learning_stats
 
 def show():
     if not st.session_state.get("logged_in"):
@@ -83,6 +83,34 @@ def show():
         }
         .card-icon-purple { font-size: 18px; color: #7F77DD; margin-bottom: 8px; }
         .card-icon-teal { font-size: 18px; color: #1D9E75; margin-bottom: 8px; }
+        .progress-card {
+            background: rgba(255,255,255,0.04);
+            border: 0.5px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 1.1rem 1.25rem;
+            margin-bottom: 2rem;
+        }
+        .progress-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .progress-label { font-size: 13px; color: #E8E6F0; font-weight: 500; }
+        .progress-pct { font-size: 15px; color: #7F77DD; font-weight: 700; }
+        .progress-track {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 99px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #534AB7, #7F77DD);
+            border-radius: 99px;
+        }
+        .progress-detail { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 8px; }
         .section-title {
             font-size: 12px;
             color: rgba(255,255,255,0.35);
@@ -181,53 +209,16 @@ def show():
         plan_text = f"{plan['duration_weeks']} semanas activo" if plan else "Sin plan generado"
         plan_icon = "📅" if plan else "⚠️"
 
-        st.markdown(f"""
-        <div class="status-grid">
-            <div class="status-card-topic">
-                <div class="card-icon-purple">📚</div>
-                <div class="card-label">Tema actual</div>
-                <div class="card-value">{profile['topic']}</div>
-            </div>
-            <div class="status-card-plan">
-                <div class="card-icon-teal">{plan_icon}</div>
-                <div class="card-label">Plan activo</div>
-                <div class="card-value">{plan_text}</div>
-            </div>
-        </div>
+        # Tarjetas de estado (tema actual / plan activo)
+        st.markdown(f'<div class="status-grid"><div class="status-card-topic"><div class="card-icon-purple">📚</div><div class="card-label">Tema actual</div><div class="card-value">{profile["topic"]}</div></div><div class="status-card-plan"><div class="card-icon-teal">{plan_icon}</div><div class="card-label">Plan activo</div><div class="card-value">{plan_text}</div></div></div>', unsafe_allow_html=True)
 
-        <div class="section-title">¿Qué quieres hacer hoy?</div>
+        # Tarjeta de progreso (solo si hay plan)
+        if plan:
+            stats = get_learning_stats(username)
+            st.markdown(f'<div class="progress-card"><div class="progress-head"><span class="progress-label">📈 Tu progreso</span><span class="progress-pct">{stats["pct"]}%</span></div><div class="progress-track"><div class="progress-fill" style="width:{stats["pct"]}%;"></div></div><div class="progress-detail">{stats["completed"]} de {stats["total"]} tareas completadas</div></div>', unsafe_allow_html=True)
 
-        <div class="nav-grid">
-            <div class="nav-card">
-                <div class="nav-icon-purple">📅</div>
-                <div>
-                    <div class="nav-card-title">Mi plan de aprendizaje</div>
-                    <div class="nav-card-sub">Ver tu plan día a día con recursos</div>
-                </div>
-            </div>
-            <div class="nav-card">
-                <div class="nav-icon-teal">🗺️</div>
-                <div>
-                    <div class="nav-card-title">Mi hoja de ruta</div>
-                    <div class="nav-card-sub">Vista general de tu camino</div>
-                </div>
-            </div>
-            <div class="nav-card">
-                <div class="nav-icon-amber">❓</div>
-                <div>
-                    <div class="nav-card-title">Quizzes</div>
-                    <div class="nav-card-sub">Pon a prueba tu conocimiento</div>
-                </div>
-            </div>
-            <div class="nav-card">
-                <div class="nav-icon-coral">🔍</div>
-                <div>
-                    <div class="nav-card-title">Recursos externos</div>
-                    <div class="nav-card-sub">Buscar materiales de estudio</div>
-                </div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        # Sección de navegación
+        st.markdown('<div class="section-title">¿Qué quieres hacer hoy?</div><div class="nav-grid"><div class="nav-card"><div class="nav-icon-purple">📅</div><div><div class="nav-card-title">Mi plan de aprendizaje</div><div class="nav-card-sub">Ver tu plan día a día con recursos</div></div></div><div class="nav-card"><div class="nav-icon-teal">🗺️</div><div><div class="nav-card-title">Mi hoja de ruta</div><div class="nav-card-sub">Vista general de tu camino</div></div></div><div class="nav-card"><div class="nav-icon-amber">❓</div><div><div class="nav-card-title">Quizzes</div><div class="nav-card-sub">Pon a prueba tu conocimiento</div></div></div><div class="nav-card"><div class="nav-icon-coral">🔍</div><div><div class="nav-card-title">Recursos externos</div><div class="nav-card-sub">Buscar materiales de estudio</div></div></div></div>', unsafe_allow_html=True)
 
         col1, col2 = st.columns(2)
         with col1:
@@ -246,6 +237,10 @@ def show():
         with col4:
             if st.button("🔍 Ver recursos", use_container_width=True):
                 pass
+
+        if st.button("📊 Ver estadísticas", use_container_width=True):
+            st.session_state.page = "stats"
+            st.rerun()
 
         st.markdown("<br>", unsafe_allow_html=True)
         if st.button("✏️ Editar mi perfil"):

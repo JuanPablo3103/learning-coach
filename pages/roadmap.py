@@ -1,5 +1,6 @@
 import streamlit as st
 from utils.agent import load_learning_plan, generate_learning_plan, save_learning_plan
+from utils.database import get_task_progress, mark_task
 
 def show():
     if not st.session_state.get("logged_in"):
@@ -74,6 +75,28 @@ def show():
         full_html += """<div class="next-card"><div class="next-title">🚀 ¿Listo para el siguiente nivel?</div><div class="next-sub">Completaste tu plan actual. Genera un nuevo plan más avanzado y sigue creciendo.</div></div></div>"""
 
         st.markdown(full_html, unsafe_allow_html=True)
+
+        # ─── Marcar tareas como completadas ───
+        st.markdown(
+            '<div class="rm-title" style="margin-top:2.5rem;">✅ Marca tu progreso</div>'
+            '<div class="rm-sub">Marca los recursos que ya completaste</div>',
+            unsafe_allow_html=True
+        )
+
+        progress = get_task_progress(username)
+
+        for week in plan["weeks"]:
+            with st.expander(f"Semana {week['week']} — {week['title']}", expanded=(week["week"] == 1)):
+                for day in week["days"]:
+                    st.markdown(f"**{day['day']}** · {day['topic']}")
+                    for idx, res in enumerate(day.get("resources", [])):
+                        task_key = f"{week['week']}-{day['day']}-{idx}"
+                        checked = progress.get(task_key, False)
+                        label = f"{res['title']} · {res.get('type', '')} · {res.get('duration_minutes', '?')} min"
+                        new_val = st.checkbox(label, value=checked, key=f"task_{task_key}")
+                        if new_val != checked:
+                            mark_task(username, week["week"], day["day"], idx, new_val)
+                            st.rerun()
 
         if st.button("✨ Generar nuevo plan"):
             with st.spinner("Generando nuevo plan..."):
