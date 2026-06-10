@@ -12,176 +12,47 @@ def show():
 
     st.markdown("""
     <style>
-        .block-container { max-width: 720px !important; padding-top: 0.5rem !important; }
+        .block-container { max-width: 720px !important; padding-top: 1.5rem !important; }
         .stApp { background: #0F0E1A !important; }
-        .topbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2.5rem;
-        }
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .logo-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
-            background: #534AB7;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-        }
-        .logo-text {
-            font-size: 15px;
-            font-weight: 500;
-            color: #E8E6F0;
-        }
-        .welcome-title {
-            font-size: 24px;
-            font-weight: 500;
-            color: #E8E6F0;
-            margin-bottom: 0.3rem;
-        }
-        .welcome-sub {
-            font-size: 14px;
-            color: rgba(255,255,255,0.4);
-            margin-bottom: 1.5rem;
-        }
-        .status-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 2rem;
-        }
-        .status-card-topic {
-            background: rgba(83,74,183,0.15);
-            border: 0.5px solid rgba(83,74,183,0.3);
-            border-radius: 12px;
-            padding: 1rem 1.25rem;
-        }
-        .status-card-plan {
-            background: rgba(29,158,117,0.12);
-            border: 0.5px solid rgba(29,158,117,0.25);
-            border-radius: 12px;
-            padding: 1rem 1.25rem;
-        }
-        .card-label {
-            font-size: 11px;
-            color: rgba(255,255,255,0.4);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 4px;
-        }
-        .card-value {
-            font-size: 15px;
-            font-weight: 500;
-            color: #E8E6F0;
-        }
+        .topbar { display: flex; align-items: center; margin-bottom: 2.5rem; }
+        .logo { display: flex; align-items: center; gap: 10px; }
+        .logo-icon { width: 36px; height: 36px; border-radius: 8px; background: #534AB7; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        .logo-text { font-size: 15px; font-weight: 500; color: #E8E6F0; }
+        .welcome-title { font-size: 26px; font-weight: 500; color: #E8E6F0; margin-bottom: 0.4rem; }
+        .welcome-sub { font-size: 14px; color: rgba(255,255,255,0.4); margin-bottom: 2rem; }
+        .status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 1.5rem; }
+        .status-card-topic { background: rgba(83,74,183,0.15); border: 0.5px solid rgba(83,74,183,0.3); border-radius: 14px; padding: 1.1rem 1.35rem; }
+        .status-card-plan { background: rgba(29,158,117,0.12); border: 0.5px solid rgba(29,158,117,0.25); border-radius: 14px; padding: 1.1rem 1.35rem; }
+        .card-label { font-size: 11px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+        .card-value { font-size: 15px; font-weight: 500; color: #E8E6F0; }
         .card-icon-purple { font-size: 18px; color: #7F77DD; margin-bottom: 8px; }
         .card-icon-teal { font-size: 18px; color: #1D9E75; margin-bottom: 8px; }
-        .progress-card {
-            background: rgba(255,255,255,0.04);
-            border: 0.5px solid rgba(255,255,255,0.08);
-            border-radius: 12px;
-            padding: 1.1rem 1.25rem;
-            margin-bottom: 2rem;
-        }
-        .progress-head {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
+        .progress-card { background: rgba(255,255,255,0.04); border: 0.5px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 1.25rem 1.35rem; margin-bottom: 2.5rem; }
+        .progress-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .progress-label { font-size: 13px; color: #E8E6F0; font-weight: 500; }
-        .progress-pct { font-size: 15px; color: #7F77DD; font-weight: 700; }
-        .progress-track {
-            width: 100%;
-            height: 8px;
-            background: rgba(255,255,255,0.08);
-            border-radius: 99px;
-            overflow: hidden;
-        }
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #534AB7, #7F77DD);
-            border-radius: 99px;
-        }
-        .progress-detail { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 8px; }
-        .section-title {
-            font-size: 12px;
-            color: rgba(255,255,255,0.35);
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            margin-bottom: 1rem;
-        }
-        .nav-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 2rem;
-        }
-        .nav-card {
-            background: rgba(255,255,255,0.04);
-            border: 0.5px solid rgba(255,255,255,0.08);
-            border-radius: 12px;
-            padding: 1.25rem;
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-        }
-        .nav-icon-purple {
-            width: 36px; height: 36px;
-            border-radius: 8px;
-            background: rgba(83,74,183,0.2);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 18px; color: #7F77DD; flex-shrink: 0;
-        }
-        .nav-icon-teal {
-            width: 36px; height: 36px;
-            border-radius: 8px;
-            background: rgba(29,158,117,0.15);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 18px; color: #1D9E75; flex-shrink: 0;
-        }
-        .nav-icon-amber {
-            width: 36px; height: 36px;
-            border-radius: 8px;
-            background: rgba(186,117,23,0.15);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 18px; color: #BA7517; flex-shrink: 0;
-        }
-        .nav-icon-coral {
-            width: 36px; height: 36px;
-            border-radius: 8px;
-            background: rgba(216,90,48,0.15);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 18px; color: #D85A30; flex-shrink: 0;
-        }
-        .nav-card-title {
-            font-size: 14px;
-            font-weight: 500;
-            color: #E8E6F0;
-            margin-bottom: 3px;
-        }
-        .nav-card-sub {
-            font-size: 12px;
-            color: rgba(255,255,255,0.35);
-        }
+        .progress-pct { font-size: 16px; color: #7F77DD; font-weight: 700; }
+        .progress-track { width: 100%; height: 8px; background: rgba(255,255,255,0.08); border-radius: 99px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #534AB7, #7F77DD); border-radius: 99px; }
+        .progress-detail { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 10px; }
+        .section-title { font-size: 12px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 1rem; }
+        .divider { height: 0.5px; background: rgba(255,255,255,0.08); margin: 2rem 0 1.5rem 0; }
         .stButton > button {
-            background: transparent !important;
-            border: 0.5px solid rgba(255,255,255,0.12) !important;
-            border-radius: 8px !important;
-            color: rgba(255,255,255,0.45) !important;
-            font-size: 13px !important;
+            width: 100% !important;
+            background: rgba(255,255,255,0.04) !important;
+            border: 0.5px solid rgba(255,255,255,0.09) !important;
+            border-radius: 12px !important;
+            color: #E8E6F0 !important;
+            font-size: 14px !important;
+            font-weight: 500 !important;
+            padding: 0.85rem 1rem !important;
+            transition: all 0.15s ease !important;
         }
         .stButton > button:hover {
             border-color: #534AB7 !important;
-            color: #7F77DD !important;
+            background: rgba(83,74,183,0.15) !important;
+            color: #FFFFFF !important;
         }
+        div[data-testid="column"] { gap: 14px !important; }
     </style>
 
     <div class="topbar">
@@ -209,16 +80,16 @@ def show():
         plan_text = f"{plan['duration_weeks']} semanas activo" if plan else "Sin plan generado"
         plan_icon = "📅" if plan else "⚠️"
 
-        # Tarjetas de estado (tema actual / plan activo)
+        # Tarjetas de estado
         st.markdown(f'<div class="status-grid"><div class="status-card-topic"><div class="card-icon-purple">📚</div><div class="card-label">Tema actual</div><div class="card-value">{profile["topic"]}</div></div><div class="status-card-plan"><div class="card-icon-teal">{plan_icon}</div><div class="card-label">Plan activo</div><div class="card-value">{plan_text}</div></div></div>', unsafe_allow_html=True)
 
-        # Tarjeta de progreso (solo si hay plan)
+        # Tarjeta de progreso
         if plan:
             stats = get_learning_stats(username)
             st.markdown(f'<div class="progress-card"><div class="progress-head"><span class="progress-label">📈 Tu progreso</span><span class="progress-pct">{stats["pct"]}%</span></div><div class="progress-track"><div class="progress-fill" style="width:{stats["pct"]}%;"></div></div><div class="progress-detail">{stats["completed"]} de {stats["total"]} tareas completadas</div></div>', unsafe_allow_html=True)
 
-        # Sección de navegación
-        st.markdown('<div class="section-title">¿Qué quieres hacer hoy?</div><div class="nav-grid"><div class="nav-card"><div class="nav-icon-purple">📅</div><div><div class="nav-card-title">Mi plan de aprendizaje</div><div class="nav-card-sub">Ver tu plan día a día con recursos</div></div></div><div class="nav-card"><div class="nav-icon-teal">🗺️</div><div><div class="nav-card-title">Mi hoja de ruta</div><div class="nav-card-sub">Vista general de tu camino</div></div></div><div class="nav-card"><div class="nav-icon-amber">❓</div><div><div class="nav-card-title">Quizzes</div><div class="nav-card-sub">Pon a prueba tu conocimiento</div></div></div><div class="nav-card"><div class="nav-icon-coral">🔍</div><div><div class="nav-card-title">Recursos externos</div><div class="nav-card-sub">Buscar materiales de estudio</div></div></div></div>', unsafe_allow_html=True)
+        # ─── Acciones principales ───
+        st.markdown('<div class="section-title">¿Qué quieres hacer hoy?</div>', unsafe_allow_html=True)
 
         col1, col2 = st.columns(2)
         with col1:
@@ -232,20 +103,35 @@ def show():
 
         col3, col4 = st.columns(2)
         with col3:
-            if st.button("❓ Hacer quiz", use_container_width=True):
-                pass
+            if st.button("🤝 Negociar mi plan", use_container_width=True):
+                st.session_state.page = "negotiate"
+                st.rerun()
         with col4:
+            if st.button("📊 Ver estadísticas", use_container_width=True):
+                st.session_state.page = "stats"
+                st.rerun()
+
+        col5, col6 = st.columns(2)
+        with col5:
+            if st.button("❓ Hacer quiz", use_container_width=True):
+                st.toast("🚧 Disponible próximamente (Sprint 4)")
+        with col6:
             if st.button("🔍 Ver recursos", use_container_width=True):
-                pass
+                st.toast("🚧 Disponible próximamente (Sprint 4)")
 
-        if st.button("📊 Ver estadísticas", use_container_width=True):
-            st.session_state.page = "stats"
-            st.rerun()
+        # ─── Acciones secundarias ───
+        st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 
-        st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("✏️ Editar mi perfil"):
-            st.session_state.page = "profile"
-            st.rerun()
+        col7, col8 = st.columns(2)
+        with col7:
+            if st.button("✏️ Editar mi perfil", use_container_width=True):
+                st.session_state.page = "profile"
+                st.rerun()
+        with col8:
+            if st.button("🚪 Cerrar sesión", use_container_width=True):
+                st.session_state.clear()
+                st.rerun()
+        return
 
     st.markdown("<br>", unsafe_allow_html=True)
     if st.button("🚪 Cerrar sesión"):
