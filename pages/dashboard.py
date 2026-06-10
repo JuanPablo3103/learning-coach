@@ -1,6 +1,6 @@
 import streamlit as st
 from utils.profile import get_profile, profile_exists
-from utils.agent import load_learning_plan, get_learning_stats
+from utils.agent import load_learning_plan, get_learning_stats, check_progress_alerts
 
 def show():
     if not st.session_state.get("logged_in"):
@@ -27,13 +27,18 @@ def show():
         .card-value { font-size: 15px; font-weight: 500; color: #E8E6F0; }
         .card-icon-purple { font-size: 18px; color: #7F77DD; margin-bottom: 8px; }
         .card-icon-teal { font-size: 18px; color: #1D9E75; margin-bottom: 8px; }
-        .progress-card { background: rgba(255,255,255,0.04); border: 0.5px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 1.25rem 1.35rem; margin-bottom: 2.5rem; }
+        .progress-card { background: rgba(255,255,255,0.04); border: 0.5px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 1.25rem 1.35rem; margin-bottom: 1.5rem; }
         .progress-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .progress-label { font-size: 13px; color: #E8E6F0; font-weight: 500; }
         .progress-pct { font-size: 16px; color: #7F77DD; font-weight: 700; }
         .progress-track { width: 100%; height: 8px; background: rgba(255,255,255,0.08); border-radius: 99px; overflow: hidden; }
         .progress-fill { height: 100%; background: linear-gradient(90deg, #534AB7, #7F77DD); border-radius: 99px; }
         .progress-detail { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 10px; }
+        .alert-section { margin-bottom: 2.5rem; }
+        .alert-box { display: flex; align-items: flex-start; gap: 10px; border-radius: 12px; padding: 0.85rem 1.1rem; margin-bottom: 10px; font-size: 13px; line-height: 1.4; }
+        .alert-warning { background: rgba(221,170,127,0.10); border: 0.5px solid rgba(221,170,127,0.30); color: #E8D2B8; }
+        .alert-success { background: rgba(29,158,117,0.10); border: 0.5px solid rgba(29,158,117,0.28); color: #A8E6CE; }
+        .alert-icon { font-size: 15px; flex-shrink: 0; }
         .section-title { font-size: 12px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 1rem; }
         .divider { height: 0.5px; background: rgba(255,255,255,0.08); margin: 2rem 0 1.5rem 0; }
         .stButton > button {
@@ -87,6 +92,17 @@ def show():
         if plan:
             stats = get_learning_stats(username)
             st.markdown(f'<div class="progress-card"><div class="progress-head"><span class="progress-label">📈 Tu progreso</span><span class="progress-pct">{stats["pct"]}%</span></div><div class="progress-track"><div class="progress-fill" style="width:{stats["pct"]}%;"></div></div><div class="progress-detail">{stats["completed"]} de {stats["total"]} tareas completadas</div></div>', unsafe_allow_html=True)
+
+            # Alertas de progreso del agente
+            alerts = check_progress_alerts(username)
+            if alerts:
+                alerts_html = '<div class="alert-section">'
+                for a in alerts:
+                    cls = "alert-success" if a["type"] == "success" else "alert-warning"
+                    icon = "🎉" if a["type"] == "success" else "⚠️"
+                    alerts_html += f'<div class="alert-box {cls}"><span class="alert-icon">{icon}</span><span>{a["message"]}</span></div>'
+                alerts_html += '</div>'
+                st.markdown(alerts_html, unsafe_allow_html=True)
 
         # ─── Acciones principales ───
         st.markdown('<div class="section-title">¿Qué quieres hacer hoy?</div>', unsafe_allow_html=True)

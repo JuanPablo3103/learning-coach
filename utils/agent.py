@@ -193,15 +193,15 @@ def generate_quiz(username, topic, num_questions=5):
 
 def check_progress_alerts(username):
     """Revisa el progreso y retorna alertas si el usuario está atrasado o adelantado"""
-    from utils.database import get_progress_stats, get_quiz_history
+    from utils.database import get_quiz_history
 
-    stats = get_progress_stats(username)
+    stats = get_learning_stats(username)
     quiz_history = get_quiz_history(username)
 
     alerts = []
 
     if stats["total"] > 0:
-        pct = stats["completed"] / stats["total"] * 100
+        pct = stats["pct"]
         if pct == 0:
             alerts.append({
                 "type": "warning",
@@ -210,26 +210,26 @@ def check_progress_alerts(username):
         elif pct < 30:
             alerts.append({
                 "type": "warning",
-                "message": f"Solo has completado el {pct:.0f}% de tus tareas. ¡Puedes ponerte al día!"
+                "message": f"Solo has completado el {pct}% de tus tareas. ¡Puedes ponerte al día!"
             })
         elif pct >= 80:
             alerts.append({
                 "type": "success",
-                "message": f"¡Excelente! Has completado el {pct:.0f}% de tus tareas."
+                "message": f"¡Excelente! Has completado el {pct}% de tus tareas."
             })
 
     if quiz_history:
         last = quiz_history[0]
-        score_pct = last["score"] / last["total"] * 100
+        score_pct = round(last["score"] / last["total"] * 100) if last["total"] else 0
         if score_pct < 50:
             alerts.append({
                 "type": "warning",
-                "message": f"Tu último quiz fue de {score_pct:.0f}%. Considera repasar el tema."
+                "message": f"Tu último quiz fue de {score_pct}%. Considera repasar el tema."
             })
         elif score_pct >= 80:
             alerts.append({
                 "type": "success",
-                "message": f"¡Muy bien! Sacaste {score_pct:.0f}% en tu último quiz."
+                "message": f"¡Muy bien! Sacaste {score_pct}% en tu último quiz."
             })
 
     log_agent_action(username, "check_alerts", f"Alertas generadas: {len(alerts)}")
