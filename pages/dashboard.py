@@ -114,7 +114,8 @@ def show():
         col5, col6 = st.columns(2)
         with col5:
             if st.button("❓ Hacer quiz", use_container_width=True):
-                st.toast("🚧 Disponible próximamente (Sprint 4)")
+                st.session_state.page = "quiz"
+                st.rerun()
         with col6:
             if st.button("🔍 Ver recursos", use_container_width=True):
                 st.toast("🚧 Disponible próximamente (Sprint 4)")

@@ -1,5 +1,5 @@
 import streamlit as st
-from pages import login, register, dashboard, recover, profile, plan, roadmap, stats, negotiate
+from pages import login, register, dashboard, recover, profile, plan, roadmap, stats, negotiate, quiz
 from utils.database import init_db
 
 init_db()
@@ -18,7 +18,6 @@ st.markdown("""
         [data-testid="stSidebar"] {display: none;}
         #MainMenu {visibility: hidden;}
         footer {visibility: hidden;}
-
         /* Botones tipo "tarjeta" consistentes en toda la app.
            El selector .stApp lo hace más específico que el de cada página,
            así gana sin necesidad de editar archivo por archivo. */
@@ -57,7 +56,7 @@ if "name" not in st.session_state:
 
 # Navegación entre páginas
 if st.session_state.logged_in:
-    if st.session_state.page not in ["dashboard", "profile", "plan", "roadmap", "stats", "negotiate"]:
+    if st.session_state.page not in ["dashboard", "profile", "plan", "roadmap", "stats", "negotiate", "quiz"]:
         st.session_state.page = "dashboard"
 
 if st.session_state.page == "login":
@@ -78,3 +77,5 @@ elif st.session_state.page == "stats":
     stats.show()
 elif st.session_state.page == "negotiate":
     negotiate.show()
+elif st.session_state.page == "quiz":
+    quiz.show()
